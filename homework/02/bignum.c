@@ -47,7 +47,7 @@ void zero_justify(bignum *n) {
 
 int compare_bignum(bignum *a, bignum *b) {
     int i;    /* counter */
-    // 原则：b>a
+    // 原则：b>a,返回值为-1侧交换 a b
     // a是负数,b是正数,所以b>a,返回1
     if ((a->signbit == MINUS) && (b->signbit == PLUS)) return PLUS;
     // a是正数,b是负数,所以a>b ,返回-1
@@ -82,7 +82,7 @@ int toInt(int a) {
     return a;
 }
 
-char toChar(int a) {
+char toChar(char a) {
     return a;
 }
 
@@ -96,32 +96,27 @@ void add_bignum(bignum *a, bignum *b, bignum *c) {
         subtract_bignum(b, a, c);
         a->signbit = MINUS;
     }
-    // a+(-b)  ==>  a-b
+        // a+(-b)  ==>  a-b
     else if ((a->signbit == PLUS) && (b->signbit == MINUS)) {
         b->signbit = PLUS;
         subtract_bignum(a, b, c);
         b->signbit = MINUS;
     } else {
         // a+b,(-a)+(-b)
-        if ((compare_bignum(a, b)) == -1) {
-            // a>b ==>  b+a
-            add_bignum(b, a, c);
-        } else {
-            int c_lastdigit = max(a->lastdigit, b->lastdigit);
-            int i;
-            for (i = 0; i < c_lastdigit + 1; ++i) {
-                int count = 0;
-                count = toInt(c->digits[i]) + toInt(b->digits[i]) + toInt(a->digits[i]);
-                if (count > 9) {
-                    c->digits[i + 1] = toChar(1);//进位
-                    count = count % 10;//进位取余
-                }
-                c->digits[i] = toChar(count);
+        int c_lastdigit = max(a->lastdigit, b->lastdigit);
+        int i;
+        for (i = 0; i < c_lastdigit + 1; ++i) {
+            int count = 0;
+            count = toInt(c->digits[i]) + toInt(b->digits[i]) + toInt(a->digits[i]);
+            if (count > 9) {
+                c->digits[i + 1] = toChar(1);//进位
+                count = count % 10;//进位取余
             }
-            if ((toInt(c->digits[i + 1])) != 0) { c->lastdigit = c_lastdigit + 1; }//
-            c->lastdigit = c_lastdigit;
-            c->signbit = a->signbit;
+            c->digits[i] = toChar(count);
         }
+        if ((toInt(c->digits[i + 1])) != 0) { c->lastdigit = c_lastdigit + 1; }//set c->lastdigit
+        c->lastdigit = c_lastdigit;
+        c->signbit = a->signbit;
     }
 }
 
@@ -135,20 +130,23 @@ void subtract_bignum(bignum *a, bignum *b, bignum *c) {
         add_bignum(a, b, c);
         b->signbit = MINUS;
     }
-    // -a-b = -(a+b)
-    else if(a->signbit == MINUS && b->signbit == PLUS){
+        // -a-b = -(a+b)
+    else if (a->signbit == MINUS && b->signbit == PLUS) {
         a->signbit = PLUS;
         add_bignum(a, b, c);
-        a->signbit = MINUS;c->signbit = MINUS;
+        a->signbit = MINUS;
+        c->signbit = MINUS;
     }
-    // -a-(-b) = b-a
-    else if(a->signbit == MINUS && b->signbit == MINUS) {
-        a->signbit = PLUS;b->signbit = PLUS;
+        // -a-(-b) = b-a
+    else if (a->signbit == MINUS && b->signbit == MINUS) {
+        a->signbit = PLUS;
+        b->signbit = PLUS;
         subtract_bignum(b, a, c);
-        a->signbit = MINUS;b->signbit = MINUS;
+        a->signbit = MINUS;
+        b->signbit = MINUS;
     }
-    // a-b
-    else{
+        // a-b
+    else {
         int n = compare_bignum(a, b);
         if (n == 1) {
             // a>b ==>  b+a
@@ -156,7 +154,7 @@ void subtract_bignum(bignum *a, bignum *b, bignum *c) {
             c->signbit = MINUS;
         } else {
             int c_lastdigit = 0;
-            c_lastdigit = max(a->lastdigit, b->lastdigit);
+            c_lastdigit = max(a->lastdigit, b->lastdigit);//c长度
             int i;
             int count = 0;
             int lowBit = 0;
@@ -169,19 +167,13 @@ void subtract_bignum(bignum *a, bignum *b, bignum *c) {
                 }
                 c->digits[i] = toChar(count);
             }
-            //find the lastdigit
             int j;
-            for (j = c_lastdigit + 1; j > 0; j--) {
+            for (j = c_lastdigit + 1; j > 0; j--) {//set c->lastdigit
                 if (toInt(c->digits[j]) != 0) {
                     c->lastdigit = j;
                     break;
                 }
             }
-            //signbit if a > b is +;
-            c->signbit = PLUS;
         }
-
-
     }
-
 }

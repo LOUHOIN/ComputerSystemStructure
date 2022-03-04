@@ -5,9 +5,9 @@ void main(int argc, char **argv) {
     bignum a, b, c;
 
     //test data
-//    argv[1] = "-10000";
-//    argv[2] = "+";
-//    argv[3] = "-2345";
+//    argv[1] = "2345";
+//    argv[2] = "-";
+//    argv[3] = "-10000";
 
     set_bignum(&a, argv[1]);
     set_bignum(&b, argv[3]);

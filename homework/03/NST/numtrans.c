@@ -26,18 +26,37 @@ long atol_with_radix(char *s, int radix) {//转换成int类型的十进制
         return result;
     } else if (radix == 10) {
         return atoi(s);
-    } else if(radix == 10){
-        return 0;
-    }
+    } else if (radix == 16) {
+        int len = 0;
+        while (s[len] != 0) {
+            len++;
+        }
+        int j,sum = 0, temp=0;
+        for (j = 0; j<len; j++) {
+            if (s[j] <= '9')
+                temp = s[j] - '0';
+            else
+                temp = s[j] - 'A' + 10;
+            sum = sum * 16 + temp;
+        }
+        return sum;
+    } else if(radix == 32)
+
+
+
+
+
 }
+
+
 
 void main(int argc, char **argv) {
 //    argv[1] = "2";
 //    argv[2] = "10";
 //    argv[3] = "1101101"; //109
-    argv[1] = "16";
-    argv[2] = "10";
-    argv[3] = "FACE"; //64206
+//    argv[1] = "16";
+//    argv[2] = "10";
+//    argv[3] = "FACE"; //64206
     int i = atoi(argv[1]);    // call atoi in stdlib
     int k = atoi(argv[2]); //finish
     long n = atol_with_radix(argv[3], i);

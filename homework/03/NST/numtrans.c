@@ -7,10 +7,8 @@
 
 int ctoi(char c) {     // helper function
     if ('0' <= c && c <= '9') return c - '0';
-    if ('A' <= c && c <= 'Z') {
-        return c; // TODO ... ;
-    }
-    if ('a' <= c && c <= 'z') return 0;// TODO ... ;
+    if ('A' <= c && c <= 'Z')return c - 'A' + 10; // TODO ... ;
+    if ('a' <= c && c <= 'z') return c-'Z'+3;// TODO ... ;
     return 0;
 }
 
@@ -26,37 +24,28 @@ long atol_with_radix(char *s, int radix) {//转换成int类型的十进制
         return result;
     } else if (radix == 10) {
         return atoi(s);
-    } else if (radix == 16) {
+    } else if (radix == 16 || radix == 32) {
         int len = 0;
         while (s[len] != 0) {
             len++;
         }
-        int j,sum = 0, temp=0;
-        for (j = 0; j<len; j++) {
+        int j, sum = 0, temp = 0;
+        for (j = 0; j < len; j++) {
             if (s[j] <= '9')
-                temp = s[j] - '0';
+                temp = ctoi(s[j]);
             else
-                temp = s[j] - 'A' + 10;
-            sum = sum * 16 + temp;
+                temp = ctoi(s[j]);
+            sum = sum * radix + temp;//16 or 32
         }
         return sum;
-    } else if(radix == 32)
-
-
-
-
-
+    }
 }
 
 
-
 void main(int argc, char **argv) {
-//    argv[1] = "2";
+//    argv[1] = "32";
 //    argv[2] = "10";
-//    argv[3] = "1101101"; //109
-//    argv[1] = "16";
-//    argv[2] = "10";
-//    argv[3] = "FACE"; //64206
+//    argv[3] = "1UME"; //64206
     int i = atoi(argv[1]);    // call atoi in stdlib
     int k = atoi(argv[2]); //finish
     long n = atol_with_radix(argv[3], i);
@@ -66,29 +55,3 @@ void main(int argc, char **argv) {
     ltoa(n, s, k);            // call ltoa in stdlib
     printf("%s\n", s);
 }
-
-
-
-
-
-
-
-//int main() {
-////    int i;
-////    char buffer[33];
-////    printf("Enter a number: ");
-////    i = 12;
-////    itoa(i, buffer, 10);    //将i转化为10进制数，存到buffer中
-////    printf("decimal: %s\n", buffer);    //输出打印buffer
-////    itoa(i, buffer, 16);    //将i转化为16进制数，存到buffer中
-////    printf("hexadecimal: %s\n", buffer);    //输出打印buffer
-////    itoa(i, buffer, 32);    //将i转化为2进制数，存到buffer中
-////    printf("binary: %s\n", buffer);    //输出打印buffer
-//    char six;
-//    six = '6';
-////    int s six - "0";
-////    six = '6'-'0';
-//
-//    printf("%d\n", ctoi(six));
-//    return 0;
-//}
